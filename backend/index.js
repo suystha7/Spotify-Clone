@@ -2,6 +2,7 @@ import express from "express";
 import dotenv from "dotenv";
 import morgan from "morgan";
 import path from "path";
+import cors from "cors";
 import fileUpload from "express-fileupload";
 import { clerkMiddleware } from "@clerk/express";
 
@@ -20,6 +21,12 @@ const app = express();
 const PORT = process.env.PORT;
 
 app.use(morgan("dev"));
+app.use(
+  cors({
+    origin: "http://localhost:3000",
+    credentials: true,
+  })
+);
 
 app.use(express.json()); //to parse req.body
 app.use(clerkMiddleware()); // will add auth to req obj => req.auth.userId
@@ -34,12 +41,12 @@ app.use(
   })
 );
 
-app.get("/api/users", userRoutes);
-app.get("/api/auth", authRoutes);
-app.get("/api/admin", adminRoutes);
-app.get("/api/songs", songRoutes);
-app.get("/api/albums", albumRoutes);
-app.get("/api/stats", statRoutes);
+app.use("/api/users", userRoutes);
+app.use("/api/auth", authRoutes);
+app.use("/api/admin", adminRoutes);
+app.use("/api/songs", songRoutes);
+app.use("/api/albums", albumRoutes);
+app.use("/api/stats", statRoutes);
 
 // error handler
 app.use((err, req, res, next) => {
