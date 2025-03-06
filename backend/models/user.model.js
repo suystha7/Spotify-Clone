@@ -2,6 +2,11 @@ import mongoose from "mongoose";
 
 const userSchema = new mongoose.Schema(
   {
+    clerkId: {
+      type: String,
+      required: true,
+      unique: true,
+    },
     fullName: {
       type: String,
       required: true,
@@ -9,11 +14,6 @@ const userSchema = new mongoose.Schema(
     imageUrl: {
       type: String,
       required: true,
-    },
-    clerkId: {
-      type: String,
-      required: true,
-      unique: true,
     },
   },
   { timestamps: true }
