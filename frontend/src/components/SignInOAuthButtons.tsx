@@ -21,7 +21,10 @@ const SignInOAuthButtons = () => {
       variant={"secondary"}
       onClick={signInWithGoogle}
     >
-      Continue with Google
+      <div className="flex items-center gap-2">
+        <img src="/google.png" alt="" className="h-6 w-6" />
+        Continue with Google
+      </div>
     </Button>
   );
 };

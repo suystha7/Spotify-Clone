@@ -18,7 +18,7 @@ const SectionGrid = ({ songs, title, isLoading }: SectionGridProps) => {
         <h2 className="text-xl sm:text-2xl font-bold">{title}</h2>
         <Button
           variant="link"
-          className="text-sm text-zinc-400 hover:text-white"
+          className="text-sm text-zinc-400 hover:text-white cursor-pointer"
         >
           Show all
         </Button>

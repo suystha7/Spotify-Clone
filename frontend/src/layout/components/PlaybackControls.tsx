@@ -22,43 +22,68 @@ const PlaybackControls = () => {
     return `${minutes}:${remainingSeconds.toString().padStart(2, "0")}`;
   };
 
-  const { isPlaying, currentSong, playNext, playPrevious, togglePlay } =
-    usePlayerStore();
+  const {
+    isPlaying,
+    currentSong,
+    playNext,
+    playPrevious,
+    togglePlay,
+    shuffled,
+    shufflePlaylist,
+    repeat,
+    toggleRepeat,
+  } = usePlayerStore();
 
   const [volume, setVolume] = useState(75);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
+
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
     audioRef.current = document.querySelector("audio");
-
     const audio = audioRef.current;
     if (!audio) return;
 
     const updateTime = () => setCurrentTime(audio.currentTime);
-    const upadateDuration = () => setDuration(audio.duration);
+    const updateDuration = () => setDuration(audio.duration);
 
     audio.addEventListener("timeupdate", updateTime);
-    audio.addEventListener("loadedmetadata", upadateDuration);
+    audio.addEventListener("loadedmetadata", updateDuration);
 
     const handleEnded = () => {
-      usePlayerStore.setState({ isPlaying: false });
+      if (repeat) {
+        audio.currentTime = 0;
+        audio.play();
+      } else {
+        playNext();
+      }
     };
 
     audio.addEventListener("ended", handleEnded);
 
     return () => {
       audio.removeEventListener("timeupdate", updateTime);
-      audio.removeEventListener("loadedmetadata", upadateDuration);
+      audio.removeEventListener("loadedmetadata", updateDuration);
       audio.removeEventListener("ended", handleEnded);
     };
-  }, [currentSong]);
+  }, [currentSong, repeat, playNext]);
 
   const handleSeek = (value: number[]) => {
     if (audioRef.current) {
       audioRef.current.currentTime = value[0];
     }
+  };
+
+  const handleTogglePlay = () => {
+    if (audioRef.current) {
+      if (isPlaying) {
+        audioRef.current.pause();
+      } else {
+        audioRef.current.play();
+      }
+    }
+    togglePlay();
   };
 
   return (
@@ -89,16 +114,20 @@ const PlaybackControls = () => {
         <div className="flex flex-col items-center gap-2 flex-1 max-w-full sm:max-w-[45%]">
           <div className="flex items-center gap-4 sm:gap-6">
             <Button
-              size={"icon"}
-              variant={"ghost"}
-              className="hidden sm:inline-flex hover:text-white text-zinc-400"
+              size="icon"
+              variant="ghost"
+              className={`hidden sm:inline-flex hover:text-white ${
+                shuffled ? "text-white" : "text-zinc-400"
+              }`}
+              onClick={shufflePlaylist}
             >
               <Shuffle className="h-4 w-4" />
             </Button>
+
             <Button
-              size={"icon"}
-              variant={"ghost"}
-              className=" hover:text-white text-zinc-400"
+              size="icon"
+              variant="ghost"
+              className="hover:text-white text-zinc-400"
               onClick={playPrevious}
               disabled={!currentSong}
             >
@@ -106,10 +135,10 @@ const PlaybackControls = () => {
             </Button>
 
             <Button
-              size={"icon"}
-              variant={"ghost"}
+              size="icon"
+              variant="ghost"
               className="bg-white hover:bg-white/50 text-black rounded-full h-8 w-8"
-              onClick={togglePlay}
+              onClick={handleTogglePlay}
               disabled={!currentSong}
             >
               {isPlaying ? (
@@ -120,9 +149,9 @@ const PlaybackControls = () => {
             </Button>
 
             <Button
-              size={"icon"}
-              variant={"ghost"}
-              className=" hover:text-white text-zinc-400"
+              size="icon"
+              variant="ghost"
+              className="hover:text-white text-zinc-400"
               onClick={playNext}
               disabled={!currentSong}
             >
@@ -130,9 +159,12 @@ const PlaybackControls = () => {
             </Button>
 
             <Button
-              size={"icon"}
-              variant={"ghost"}
-              className="hidden sm:inline-flex hover:text-white text-zinc-400"
+              size="icon"
+              variant="ghost"
+              className={`hidden sm:inline-flex hover:text-white ${
+                repeat ? "text-white" : "text-zinc-400"
+              }`}
+              onClick={toggleRepeat}
             >
               <Repeat className="h-4 w-4" />
             </Button>
@@ -157,32 +189,34 @@ const PlaybackControls = () => {
 
         {/* volume */}
         <div className="hidden sm:flex items-center gap-4 min-w-[100px] w-[30%] justify-end">
-          <Button
-            size={"icon"}
-            variant={"ghost"}
-            className="hover:text-white text-zinc-400"
-          >
-            <Mic2 className="h-4 w-4" />
-          </Button>
-          <Button
-            size={"icon"}
-            variant={"ghost"}
-            className="hover:text-white text-zinc-400"
-          >
-            <ListMusic className="h-4 w-4" />
-          </Button>
-          <Button
-            size={"icon"}
-            variant={"ghost"}
-            className="hover:text-white text-zinc-400"
-          >
-            <Laptop className="h-4 w-4" />
-          </Button>
+          <div className="hidden lg:flex">
+            <Button
+              size="icon"
+              variant="ghost"
+              className="hover:text-white text-zinc-400"
+            >
+              <Mic2 className="h-4 w-4" />
+            </Button>
+            <Button
+              size="icon"
+              variant="ghost"
+              className="hover:text-white text-zinc-400"
+            >
+              <ListMusic className="h-4 w-4" />
+            </Button>
+            <Button
+              size="icon"
+              variant="ghost"
+              className="hover:text-white text-zinc-400"
+            >
+              <Laptop className="h-4 w-4" />
+            </Button>
+          </div>
 
           <div className="flex items-center gap-2">
             <Button
-              size={"icon"}
-              variant={"ghost"}
+              size="icon"
+              variant="ghost"
               className="hover:text-white text-zinc-400"
             >
               <Volume1 className="h-4 w-4" />
