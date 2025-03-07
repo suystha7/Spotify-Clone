@@ -9,13 +9,10 @@ export const getAllSongs = async (req, res, next) => {
   }
 };
 
-export const getFeaturedSongs = async (req, res, next) => {
+const getRandomSongs = async (size, res, next) => {
   try {
-    // fetch 6 random sonfs using mongodb's aggregration pipeline
     const songs = await Song.aggregate([
-      {
-        $sample: { size: 6 },
-      },
+      { $sample: { size } },
       {
         $project: {
           _id: 1,
@@ -32,46 +29,9 @@ export const getFeaturedSongs = async (req, res, next) => {
   }
 };
 
-export const getMadeForYouSongs = async (req, res, next) => {
-  try {
-    const songs = await Song.aggregate([
-      {
-        $sample: { size: 4 },
-      },
-      {
-        $project: {
-          _id: 1,
-          title: 1,
-          artist: 1,
-          imageUrl: 1,
-          audioUrl: 1,
-        },
-      },
-    ]);
-    res.status(200).json(songs);
-  } catch (error) {
-    next(error);
-  }
-};
-
-export const getTrendingSongs = async (req, res, next) => {
-  try {
-    const songs = await Song.aggregate([
-      {
-        $sample: { size: 4 },
-      },
-      {
-        $project: {
-          _id: 1,
-          title: 1,
-          artist: 1,
-          imageUrl: 1,
-          audioUrl: 1,
-        },
-      },
-    ]);
-    res.status(200).json(songs);
-  } catch (error) {
-    next(error);
-  }
-};
+export const getFeaturedSongs = (req, res, next) =>
+  getRandomSongs(6, res, next);
+export const getMadeForYouSongs = (req, res, next) =>
+  getRandomSongs(4, res, next);
+export const getTrendingSongs = (req, res, next) =>
+  getRandomSongs(4, res, next);
