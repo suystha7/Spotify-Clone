@@ -3,6 +3,7 @@ import SectionGrid from "@/components/home/SectionGrid";
 import Topbar from "@/components/Topbar";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useMusicStore } from "@/stores/useMusicStore";
+import { usePlayerStore } from "@/stores/usePlayerStore";
 import { useEffect } from "react";
 
 const HomePage = () => {
@@ -10,17 +11,30 @@ const HomePage = () => {
     fetchMadeForYouSongs,
     fetchTrendingSongs,
     fetchFeaturedSongs,
-    // featuredSongs,
     madeForYouSongs,
     trendingSongs,
+    featuredSongs,
     isLoading,
   } = useMusicStore();
+
+  const { initializeQueue } = usePlayerStore();
 
   useEffect(() => {
     fetchFeaturedSongs();
     fetchMadeForYouSongs();
     fetchTrendingSongs();
   }, [fetchFeaturedSongs, fetchMadeForYouSongs, fetchTrendingSongs]);
+
+  useEffect(() => {
+    if (
+      madeForYouSongs.length > 0 &&
+      trendingSongs.length > 0 &&
+      featuredSongs.length > 0
+    ) {
+      const allSongs = [...featuredSongs, ...madeForYouSongs, ...trendingSongs];
+      initializeQueue(allSongs);
+    }
+  }, [initializeQueue, featuredSongs, trendingSongs, madeForYouSongs]);
 
   return (
     <main className="rounded-md overflow-hidden h-full bg-gradient-to-b from-zinc-800 to-zinc-900">
