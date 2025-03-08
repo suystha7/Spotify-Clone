@@ -18,3 +18,10 @@ export interface Album {
   songs: Song[];
   imageUrl: string;
 }
+
+export interface Stats {
+  totalSongs: number;
+  totalUsers: number;
+  totalArtists: number;
+  totalAlbums: number;
+}

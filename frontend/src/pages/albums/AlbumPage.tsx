@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { useMusicStore } from "@/stores/useMusicStore";
 import { usePlayerStore } from "@/stores/usePlayerStore";
 import { ScrollArea } from "@radix-ui/react-scroll-area";
-import { Clock, Music, Pause, Play } from "lucide-react";
+import { Clock, Music, Pause, Play, Table } from "lucide-react";
 import { useEffect } from "react";
 import { useParams } from "react-router-dom";
 
@@ -101,6 +101,9 @@ const AlbumPage = () => {
 
             {/* table section */}
             <div className="bg-black/20 backdrop-blur-sm">
+            <Table>
+              
+            </Table>
               {/* table header*/}
               <div className="grid grid-cols-[16px_4fr_2fr_1fr] gap-4 px-10 py-2 text-sm text-zinc-400 border-b border-white/5">
                 <div>#</div>
